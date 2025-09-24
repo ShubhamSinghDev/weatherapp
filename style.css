@@ -4,3 +4,62 @@ body {
     transition: background 0.5s ease;
 }
 
+.weather-bg-sunny {
+    background: linear-gradient(to bottom right, #ffd89b, #19547b);
+}
+
+.weather-bg-cloudy {
+    background: linear-gradient(to bottom right, #bdc3c7, #2c3e50);
+}
+
+.weather-bg-rainy {
+    background: linear-gradient(to bottom right, #3a7bd5, #00d2ff);
+}
+
+.weather-bg-snow {
+    background: linear-gradient(to bottom right, #e6e9f0, #eef1f5);
+}
+
+.weather-bg-clear {
+    background: linear-gradient(to bottom right, #36d1dc, #5b86e5);
+}
+
+.weather-bg-default {
+    background: linear-gradient(to bottom right, #4facfe, #00f2fe);
+}
+
+.forecast-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.forecast-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+#recentCities {
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e0 #f7fafc;
+}
+
+#recentCities::-webkit-scrollbar {
+    width: 6px;
+}
+
+#recentCities::-webkit-scrollbar-track {
+    background: #f7fafc;
+    border-radius: 3px;
+}
+
+#recentCities::-webkit-scrollbar-thumb {
+    background-color: #cbd5e0;
+    border-radius: 3px;
+}
+
+.recent-city-item {
+    transition: background-color 0.2s ease;
+}
+
+.recent-city-item:hover {
+    background-color: #f7fafc;
+}

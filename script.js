@@ -109,3 +109,121 @@ function getCurrentLocationWeather() {
 }
 
 // Fetch weather data by city name
+async function fetchWeatherData(cityName) {
+    showLoadingState();
+    
+    try {
+        console.log(`Fetching weather for: ${cityName}`);
+        
+        // Build API URL with your specific endpoint
+        const apiUrl = `${BASE_URL}?q=${encodeURIComponent(cityName)}&appid=${API_KEY}&units=metric`;
+        console.log('API URL:', apiUrl);
+        
+        const response = await fetch(apiUrl);
+        console.log('Response status:', response.status);
+        
+        if (response.status === 401) {
+            // API key is invalid - use mock data
+            console.log('API key invalid, using mock data');
+            displayMockData(cityName);
+            showWeatherAlert('Using demonstration data. Please check your API key for real weather data.');
+            return;
+        }
+        
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        console.log('Weather data received:', data);
+        
+        // Display the real weather data
+        displayCurrentWeather(data);
+        
+        // Since we only have current weather endpoint, generate mock forecast
+        generateMockForecast(data);
+        
+        addToRecentCities(cityName);
+        updateBackground(data.weather[0].main);
+        checkExtremeTemperature(data.main.temp);
+        
+    } catch (error) {
+        console.error('Fetch error:', error);
+        
+        // Fallback to mock data on any error
+        displayMockData(cityName);
+        showWeatherAlert('Using demonstration data due to: ' + error.message);
+        
+    } finally {
+        hideLoadingState();
+    }
+}
+
+// Fetch weather by coordinates
+async function fetchWeatherByCoords(lat, lon) {
+    showLoadingState();
+    
+    try {
+        const apiUrl = `${BASE_URL}?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`;
+        const response = await fetch(apiUrl);
+        
+        if (response.status === 401) {
+            // Use mock data for current location
+            displayMockData('Your Location');
+            return;
+        }
+        
+        if (!response.ok) {
+            throw new Error('Failed to fetch weather data');
+        }
+        
+        const data = await response.json();
+        displayCurrentWeather(data);
+        generateMockForecast(data);
+        addToRecentCities(data.name);
+        updateBackground(data.weather[0].main);
+        checkExtremeTemperature(data.main.temp);
+        
+    } catch (error) {
+        console.error('Coordinate fetch error:', error);
+        displayMockData('Your Location');
+    } finally {
+        hideLoadingState();
+    }
+}
+
+// Display current weather data
+function displayCurrentWeather(data) {
+    currentWeatherData = data;
+    
+    const cityName = data.name;
+    const country = data.sys.country;
+    const temp = Math.round(data.main.temp);
+    const feelsLike = Math.round(data.main.feels_like);
+    const humidity = data.main.humidity;
+    const windSpeed = Math.round(data.wind.speed * 3.6);
+    const pressure = data.main.pressure;
+    const visibility = (data.visibility / 1000).toFixed(1);
+    const sunrise = new Date(data.sys.sunrise * 1000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    const sunset = new Date(data.sys.sunset * 1000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    const weatherDesc = data.weather[0].description;
+    const weatherIcon = data.weather[0].icon;
+    
+    // Update DOM elements
+    document.getElementById('currentCity').textContent = `${cityName}, ${country}`;
+    document.getElementById('currentTemp').textContent = `${temp}°C`;
+    document.getElementById('weatherDesc').textContent = weatherDesc.charAt(0).toUpperCase() + weatherDesc.slice(1);
+    document.getElementById('feelsLike').textContent = `${feelsLike}°C`;
+    document.getElementById('humidity').textContent = `${humidity}%`;
+    document.getElementById('windSpeed').textContent = `${windSpeed} km/h`;
+    document.getElementById('pressure').textContent = `${pressure} hPa`;
+    document.getElementById('visibility').textContent = `${visibility} km`;
+    document.getElementById('sunrise').textContent = sunrise;
+    document.getElementById('sunset').textContent = sunset;
+    
+    updateWeatherIcon(weatherIcon);
+    currentWeather.classList.remove('hidden');
+}
+
+// Generate mock forecast data based on current weather

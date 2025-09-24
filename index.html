@@ -64,7 +64,83 @@
                 </div>
             </div>
 
-            
+            <!-- Current Weather -->
+            <div id="currentWeather" class="bg-white rounded-xl shadow-lg p-6 mb-6 hidden">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-2xl font-bold" id="currentCity">City Name</h2>
+                    <div class="flex items-center">
+                        <button id="unitToggle" class="bg-gray-200 text-gray-700 px-3 py-1 rounded-lg text-sm hover:bg-gray-300">
+                            Switch to °F
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="flex flex-col items-center justify-center p-4 bg-blue-50 rounded-lg">
+                        <div id="weatherIcon" class="text-6xl mb-2">
+                            <i class="fas fa-sun text-yellow-500"></i>
+                        </div>
+                        <div id="currentTemp" class="text-4xl font-bold">24°C</div>
+                        <div id="weatherDesc" class="text-gray-600">Sunny</div>
+                    </div>
+                    
+                    <div class="p-4 bg-blue-50 rounded-lg">
+                        <h3 class="font-bold mb-2">Details</h3>
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Feels like</span>
+                                <span id="feelsLike">25°C</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Humidity</span>
+                                <span id="humidity">65%</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Wind</span>
+                                <span id="windSpeed">12 km/h</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Pressure</span>
+                                <span id="pressure">1013 hPa</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="p-4 bg-blue-50 rounded-lg">
+                        <h3 class="font-bold mb-2">Additional Info</h3>
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Visibility</span>
+                                <span id="visibility">10 km</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Sunrise</span>
+                                <span id="sunrise">06:30</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Sunset</span>
+                                <span id="sunset">18:45</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Extended Forecast -->
+            <div id="extendedForecast" class="bg-white rounded-xl shadow-lg p-6 hidden">
+                <h2 class="text-2xl font-bold mb-4">5-Day Forecast</h2>
+                <div id="forecastContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                    <!-- Forecast cards will be populated here -->
+                </div>
+            </div>
+
+            <!-- Loading Spinner -->
+            <div id="loadingSpinner" class="flex justify-center items-center py-12 hidden">
+                <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+            </div>
+        </main>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>

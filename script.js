@@ -76,3 +76,15 @@ function setupEventListeners() {
 }
 
 // Handle city search
+function handleCitySearch() {
+    const cityName = cityInput.value.trim();
+    
+    if (!cityName) {
+        showError('Please enter a city name');
+        return;
+    }
+    
+    fetchWeatherData(cityName);
+}
+
+// Get weather for current location

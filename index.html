@@ -40,8 +40,31 @@
             <p class="text-white opacity-90">Get accurate weather information for any location</p>
         </header>
 
-  
+        <main class="max-w-4xl mx-auto">
+            <!-- Search Section -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+                <div class="flex flex-col md:flex-row gap-4">
+                    <div class="relative flex-grow">
+                        <input 
+                            type="text" 
+                            id="cityInput" 
+                            placeholder="Enter city name..." 
+                            class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                        <div id="recentCities" class="absolute z-10 w-full bg-white border border-gray-300 rounded-lg mt-1 shadow-lg hidden max-h-60 overflow-y-auto">
+                            <!-- Recent cities will be populated here -->
+                        </div>
+                    </div>
+                    <button id="searchBtn" class="bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 transition-colors flex items-center justify-center">
+                        <i class="fas fa-search mr-2"></i> Search
+                    </button>
+                    <button id="currentLocationBtn" class="bg-green-500 text-white p-3 rounded-lg hover:bg-green-600 transition-colors flex items-center justify-center">
+                        <i class="fas fa-location-arrow mr-2"></i> Current Location
+                    </button>
+                </div>
+            </div>
 
+            
     <script src="script.js"></script>
 </body>
 </html>

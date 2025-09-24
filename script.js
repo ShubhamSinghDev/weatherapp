@@ -88,3 +88,24 @@ function handleCitySearch() {
 }
 
 // Get weather for current location
+function getCurrentLocationWeather() {
+    if (!navigator.geolocation) {
+        showError('Geolocation is not supported by your browser');
+        return;
+    }
+    
+    showLoadingState();
+    
+    navigator.geolocation.getCurrentPosition(
+        position => {
+            const { latitude, longitude } = position.coords;
+            fetchWeatherByCoords(latitude, longitude);
+        },
+        error => {
+            hideLoadingState();
+            showError('Unable to retrieve your location. Please check location permissions.');
+        }
+    );
+}
+
+// Fetch weather data by city name

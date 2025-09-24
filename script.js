@@ -227,3 +227,281 @@ function displayCurrentWeather(data) {
 }
 
 // Generate mock forecast data based on current weather
+function generateMockForecast(currentData) {
+    const forecastContainer = document.getElementById('forecastContainer');
+    forecastContainer.innerHTML = '';
+    
+    const baseTemp = currentData.main.temp;
+    const baseHumidity = currentData.main.humidity;
+    const baseWind = currentData.wind.speed;
+    const weatherCondition = currentData.weather[0].main;
+    
+    for (let i = 1; i <= 5; i++) {
+        const date = new Date();
+        date.setDate(date.getDate() + i);
+        
+        // Vary temperatures slightly for each day
+        const dayTemp = Math.round(baseTemp + (Math.random() * 6 - 3));
+        const minTemp = Math.round(dayTemp - 3 - Math.random() * 4);
+        const maxTemp = Math.round(dayTemp + 3 + Math.random() * 4);
+        const humidity = Math.max(30, Math.min(90, baseHumidity + (Math.random() * 20 - 10)));
+        const windSpeed = Math.round((baseWind + Math.random() * 5) * 3.6);
+        
+        const forecastCard = document.createElement('div');
+        forecastCard.className = 'forecast-card bg-blue-50 rounded-lg p-4 text-center';
+        
+        forecastCard.innerHTML = `
+            <div class="font-bold mb-2">${date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</div>
+            <div class="text-4xl mb-2">${getWeatherIconForCondition(weatherCondition)}</div>
+            <div class="text-xl font-bold mb-1">${maxTemp}° / ${minTemp}°</div>
+            <div class="text-gray-600 text-sm mb-2 capitalize">${getWeatherDescription(weatherCondition)}</div>
+            <div class="flex justify-between text-sm mt-3">
+                <div class="flex items-center">
+                    <i class="fas fa-wind text-gray-500 mr-1"></i>
+                    <span>${windSpeed} km/h</span>
+                </div>
+                <div class="flex items-center">
+                    <i class="fas fa-tint text-gray-500 mr-1"></i>
+                    <span>${humidity}%</span>
+                </div>
+            </div>
+        `;
+        
+        forecastContainer.appendChild(forecastCard);
+    }
+    
+    extendedForecast.classList.remove('hidden');
+}
+
+// Display mock data when API fails
+function displayMockData(cityName) {
+    console.log('Displaying mock data for:', cityName);
+    
+    // Create realistic mock data based on city name
+    const mockData = {
+        name: cityName,
+        sys: { country: 'Demo' },
+        main: {
+            temp: 22 + Math.random() * 10,
+            feels_like: 24 + Math.random() * 8,
+            humidity: 60 + Math.random() * 30,
+            pressure: 1010 + Math.random() * 20,
+            temp_min: 18 + Math.random() * 8,
+            temp_max: 26 + Math.random() * 10
+        },
+        wind: { speed: 2 + Math.random() * 5 },
+        visibility: 8000 + Math.random() * 12000,
+        weather: [
+            {
+                main: ['Clear', 'Clouds', 'Rain'][Math.floor(Math.random() * 3)],
+                description: 'mock weather data',
+                icon: '01d'
+            }
+        ],
+        sys: {
+            sunrise: Math.floor(Date.now() / 1000) - 3600,
+            sunset: Math.floor(Date.now() / 1000) + 21600
+        }
+    };
+    
+    displayCurrentWeather(mockData);
+    generateMockForecast(mockData);
+    addToRecentCities(cityName);
+    updateBackground(mockData.weather[0].main);
+}
+
+// Update weather icon
+function updateWeatherIcon(iconCode) {
+    const weatherIconElement = document.getElementById('weatherIcon');
+    weatherIconElement.innerHTML = '';
+    
+    const iconElement = document.createElement('i');
+    
+    const iconMap = {
+        '01d': 'fas fa-sun text-yellow-500',
+        '01n': 'fas fa-moon text-gray-300',
+        '02d': 'fas fa-cloud-sun text-yellow-500',
+        '02n': 'fas fa-cloud-moon text-gray-300',
+        '03d': 'fas fa-cloud text-gray-400',
+        '03n': 'fas fa-cloud text-gray-400',
+        '04d': 'fas fa-cloud text-gray-500',
+        '04n': 'fas fa-cloud text-gray-500',
+        '09d': 'fas fa-cloud-rain text-blue-400',
+        '09n': 'fas fa-cloud-rain text-blue-400',
+        '10d': 'fas fa-cloud-sun-rain text-blue-400',
+        '10n': 'fas fa-cloud-moon-rain text-blue-400',
+        '11d': 'fas fa-bolt text-yellow-500',
+        '11n': 'fas fa-bolt text-yellow-500',
+        '13d': 'fas fa-snowflake text-blue-200',
+        '13n': 'fas fa-snowflake text-blue-200',
+        '50d': 'fas fa-smog text-gray-400',
+        '50n': 'fas fa-smog text-gray-400'
+    };
+    
+    iconElement.className = `text-6xl ${iconMap[iconCode] || 'fas fa-cloud text-gray-400'}`;
+    weatherIconElement.appendChild(iconElement);
+}
+
+// Get weather icon for forecast
+function getWeatherIconForCondition(condition) {
+    const iconMap = {
+        'Clear': '☀️',
+        'Clouds': '☁️',
+        'Rain': '🌧️',
+        'Drizzle': '🌦️',
+        'Thunderstorm': '⛈️',
+        'Snow': '❄️',
+        'Mist': '🌫️'
+    };
+    
+    return iconMap[condition] || '☁️';
+}
+
+// Get weather description
+function getWeatherDescription(condition) {
+    const descriptions = {
+        'Clear': 'clear sky',
+        'Clouds': 'cloudy',
+        'Rain': 'rainy',
+        'Drizzle': 'light rain',
+        'Thunderstorm': 'thunderstorm',
+        'Snow': 'snowy',
+        'Mist': 'misty'
+    };
+    
+    return descriptions[condition] || 'partly cloudy';
+}
+
+// Toggle temperature unit
+function toggleTemperatureUnit() {
+    if (!currentWeatherData) return;
+    
+    isCelsius = !isCelsius;
+    const currentTempElement = document.getElementById('currentTemp');
+    const feelsLikeElement = document.getElementById('feelsLike');
+    
+    const currentTemp = currentWeatherData.main.temp;
+    const feelsLike = currentWeatherData.main.feels_like;
+    
+    if (isCelsius) {
+        currentTempElement.textContent = `${Math.round(currentTemp)}°C`;
+        feelsLikeElement.textContent = `${Math.round(feelsLike)}°C`;
+        unitToggle.textContent = 'Switch to °F';
+    } else {
+        const tempF = Math.round(currentTemp * 9/5 + 32);
+        const feelsLikeF = Math.round(feelsLike * 9/5 + 32);
+        currentTempElement.textContent = `${tempF}°F`;
+        feelsLikeElement.textContent = `${feelsLikeF}°F`;
+        unitToggle.textContent = 'Switch to °C';
+    }
+}
+
+// Recent cities functions
+function addToRecentCities(cityName) {
+    recentCities = recentCities.filter(city => city.toLowerCase() !== cityName.toLowerCase());
+    recentCities.unshift(cityName);
+    if (recentCities.length > 5) recentCities = recentCities.slice(0, 5);
+    localStorage.setItem('recentCities', JSON.stringify(recentCities));
+    updateRecentCitiesDropdown();
+}
+
+function updateRecentCitiesDropdown() {
+    recentCitiesDropdown.innerHTML = '';
+    
+    if (recentCities.length === 0) {
+        const emptyItem = document.createElement('div');
+        emptyItem.className = 'p-3 text-gray-500 text-center';
+        emptyItem.textContent = 'No recent cities';
+        recentCitiesDropdown.appendChild(emptyItem);
+    } else {
+        recentCities.forEach(city => {
+            const cityItem = document.createElement('div');
+            cityItem.className = 'recent-city-item p-3 cursor-pointer border-b border-gray-100 last:border-b-0 hover:bg-gray-100';
+            cityItem.textContent = city;
+            
+            cityItem.addEventListener('click', function() {
+                cityInput.value = city;
+                fetchWeatherData(city);
+                recentCitiesDropdown.classList.add('hidden');
+            });
+            
+            recentCitiesDropdown.appendChild(cityItem);
+        });
+    }
+}
+
+function showRecentCities() {
+    if (recentCities.length > 0) {
+        recentCitiesDropdown.classList.remove('hidden');
+    }
+}
+
+// Update background based on weather
+function updateBackground(weatherCondition) {
+    const body = document.body;
+    
+    // Remove all weather classes
+    body.className = body.className.replace(/weather-bg-\w+/g, '');
+    
+    // Add appropriate class
+    switch (weatherCondition.toLowerCase()) {
+        case 'clear':
+            body.classList.add('weather-bg-sunny');
+            break;
+        case 'clouds':
+            body.classList.add('weather-bg-cloudy');
+            break;
+        case 'rain':
+        case 'drizzle':
+            body.classList.add('weather-bg-rainy');
+            break;
+        case 'snow':
+            body.classList.add('weather-bg-snow');
+            break;
+        default:
+            body.classList.add('weather-bg-default');
+    }
+}
+
+// Check for extreme temperatures
+function checkExtremeTemperature(temp) {
+    if (temp > 40) {
+        showWeatherAlert('🌡️ Extreme heat warning! Temperature is above 40°C. Stay hydrated!');
+    } else if (temp < 0) {
+        showWeatherAlert('🥶 Freezing temperatures! Dress warmly and be cautious of icy conditions.');
+    }
+}
+
+// Show weather alert
+function showWeatherAlert(message) {
+    alertMessage.textContent = message;
+    weatherAlert.classList.remove('hidden');
+    
+    setTimeout(() => {
+        weatherAlert.classList.add('hidden');
+    }, 8000);
+}
+
+// Show error modal
+function showError(message) {
+    errorMessage.textContent = message;
+    errorModal.classList.remove('hidden');
+}
+
+// Hide error modal
+function hideErrorModal() {
+    errorModal.classList.add('hidden');
+}
+
+// Loading states
+function showLoadingState() {
+    loadingSpinner.classList.remove('hidden');
+    currentWeather.classList.add('hidden');
+    extendedForecast.classList.add('hidden');
+}
+
+function hideLoadingState() {
+    loadingSpinner.classList.add('hidden');
+}
+
+console.log('Weather app script loaded successfully!');
